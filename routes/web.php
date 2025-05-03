@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\DB;
 use App\Models\Classroom;
 
 Route::get('/', function () {
@@ -9,8 +10,13 @@ Route::get('/', function () {
 
 // Student routes
 Route::get('/students', function() {
-    $students = Classroom::getStudents();
-    return response()->json($students);
+    try {
+        // Directly query database instead of using the model
+        $students = DB::select('SELECT * FROM students');
+        return response()->json($students);
+    } catch (\Exception $e) {
+        return response()->json(['error' => $e->getMessage()], 500);
+    }
 });
 
 Route::get('/students/{id}', function($id) {
@@ -46,8 +52,13 @@ Route::delete('/students/{id}', function($id) {
 
 // Teacher routes
 Route::get('/teachers', function() {
-    $teachers = Classroom::getTeachers();
-    return response()->json($teachers);
+    try {
+        // Directly query database instead of using the model
+        $teachers = DB::select('SELECT * FROM teachers');
+        return response()->json($teachers);
+    } catch (\Exception $e) {
+        return response()->json(['error' => $e->getMessage()], 500);
+    }
 });
 
 Route::get('/teachers/{id}', function($id) {

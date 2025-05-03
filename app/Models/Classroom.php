@@ -2,137 +2,97 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Facades\DB;
+
 class Classroom
 {
-    // Fake database
-    protected static $data = [
-        'students' => [
-            ['name' => 'Ramy', 'age' => 20 , 'id' => 1],
-            ['name' => 'chhay Heng', 'age' => 22, 'id' => 2],
-            ['name' => 'sok chea', 'age' => 19, 'id' => 3],
-        ],
-        'teachers' => [
-            ['name' => 'Mrs. donald trump', 'subject' => 'Math', 'id' => 1],
-            ['name' => 'Mrs. Cristiano Ronaldo', 'subject' => 'Science', 'id' => 2],
-            ['name' => 'Mrs.Lionel Messi', 'subject' => 'English', 'id' => 3]
-        ]
-    ];
-
+    // Get all students from the database
     public static function getStudents()
     {
-        return self::$data['students'];
+        return DB::table('students')->get();
     }
 
+    // Get all teachers from the database
     public static function getTeachers()
     {
-        return self::$data['teachers'];
+        return DB::table('teachers')->get();
     }
 
-    // get student by id
+    // Get student by id
     public static function getStudentById($id)
     {
-        foreach (self::$data['students'] as $student) {
-            if ($student['id'] == $id) {
-                return $student;
-            }
-        }
-        return null;
+        return DB::table('students')->where('id', $id)->first();
     }
 
-    // delete student by id
+    // Delete student by id
     public static function deleteStudent($id)
     {
-        foreach (self::$data['students'] as $index => $student) {
-            if ($student['id'] == $id) {
-                array_splice(self::$data['students'], $index, 1);
-                return true;
-            }
-        }
-        return false;
+        $deleted = DB::table('students')->where('id', $id)->delete();
+        return $deleted > 0;
     }
 
-    // create student
+    // Create student
     public static function createStudent($data)
     {
-        // Generate a new ID (max ID + 1)
-        $maxId = 0;
-        foreach (self::$data['students'] as $student) {
-            if ($student['id'] > $maxId) {
-                $maxId = $student['id'];
-            }
-        }
-        $data['id'] = $maxId + 1;
+        $data['created_at'] = now();
+        $data['updated_at'] = now();
         
-        // Add the new student
-        self::$data['students'][] = $data;
-        return $data;
+        $id = DB::table('students')->insertGetId($data);
+        return DB::table('students')->where('id', $id)->first();
     }
 
-    // create teacher
+    // Create teacher
     public static function createTeacher($data)
     {
-        // Generate a new ID (max ID + 1)
-        $maxId = 0;
-        foreach (self::$data['teachers'] as $teacher) {
-            if ($teacher['id'] > $maxId) {
-                $maxId = $teacher['id'];
-            }
-        }
-        $data['id'] = $maxId + 1;
+        $data['created_at'] = now();
+        $data['updated_at'] = now();
         
-        // Add the new teacher
-        self::$data['teachers'][] = $data;
-        return $data;
+        $id = DB::table('teachers')->insertGetId($data);
+        return DB::table('teachers')->where('id', $id)->first();
     }
 
-    // edit student by id
+    // Update student by id
     public static function updateStudent($id, $data)
     {
-        foreach (self::$data['students'] as $index => $student) {
-            if ($student['id'] == $id) {
-                // Preserve the ID
-                $data['id'] = $id;
-                self::$data['students'][$index] = $data;
-                return $data;
-            }
+        $data['updated_at'] = now();
+        
+        $updated = DB::table('students')
+            ->where('id', $id)
+            ->update($data);
+        
+        if ($updated) {
+            return DB::table('students')->where('id', $id)->first();
         }
+        
         return null;
     }
 
-    // edit teacher by id
+    // Update teacher by id
     public static function updateTeacher($id, $data)
     {
-        foreach (self::$data['teachers'] as $index => $teacher) {
-            if ($teacher['id'] == $id) {
-                // Preserve the ID
-                $data['id'] = $id;
-                self::$data['teachers'][$index] = $data;
-                return $data;
-            }
+        $data['updated_at'] = now();
+        
+        $updated = DB::table('teachers')
+            ->where('id', $id)
+            ->update($data);
+        
+        if ($updated) {
+            return DB::table('teachers')->where('id', $id)->first();
         }
+        
         return null;
     }
 
-    // get teacher by id
+    // Get teacher by id
     public static function getTeacherById($id)
     {
-        foreach (self::$data['teachers'] as $teacher) {
-            if ($teacher['id'] == $id) {
-                return $teacher;
-            }
-        }
-        return null;
+        return DB::table('teachers')->where('id', $id)->first();
     }
 
-    // delete teacher by id
+    // Delete teacher by id
     public static function deleteTeacher($id)
     {
-        foreach (self::$data['teachers'] as $index => $teacher) {
-            if ($teacher['id'] == $id) {
-                array_splice(self::$data['teachers'], $index, 1);
-                return true;
-            }
-        }
-        return false;
+        $deleted = DB::table('teachers')->where('id', $id)->delete();
+        return $deleted > 0;
     }
 }
