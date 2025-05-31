@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Models\Classroom;
+use App\Http\Controllers\ClassroomController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,76 +15,21 @@ use App\Models\Classroom;
 |
 */
 
+// Test route to check if API is working
+Route::get('/test', function() {
+    return response()->json(['message' => 'API is working!'], 200);
+});
+
 // Student routes
-Route::get('/students', function() {
-    $students = Classroom::getStudents();
-    return response()->json($students);
-});
-
-Route::get('/students/{id}', function($id) {
-    $student = Classroom::getStudentById($id);
-    if (!$student) {
-        return response()->json(['message' => 'Student not found'], 404);
-    }
-    return response()->json($student);
-});
-
-Route::post('/students', function(Request $request) {
-    $data = $request->all();
-    $student = Classroom::createStudent($data);
-    return response()->json(['message' => 'Student created', 'data' => $student], 201);
-});
-
-Route::patch('/students/{id}', function(Request $request, $id) {
-    $data = $request->all();
-    $student = Classroom::updateStudent($id, $data);
-    if (!$student) {
-        return response()->json(['message' => 'Student not found'], 404);
-    }
-    return response()->json(['message' => 'Student updated', 'data' => $student]);
-});
-
-Route::delete('/students/{id}', function($id) {
-    $success = Classroom::deleteStudent($id);
-    if (!$success) {
-        return response()->json(['message' => 'Student not found'], 404);
-    }
-    return response()->json(['message' => 'Student deleted']);
-});
+Route::get('/students', [ClassroomController::class, 'indexStudents']);
+Route::get('/students/{id}', [ClassroomController::class, 'showStudent']);
+Route::post('/students', [ClassroomController::class, 'storeStudent']);
+Route::patch('/students/{id}', [ClassroomController::class, 'updateStudent']);
+Route::delete('/students/{id}', [ClassroomController::class, 'destroyStudent']);
 
 // Teacher routes
-Route::get('/teachers', function() {
-    $teachers = Classroom::getTeachers();
-    return response()->json($teachers);
-});
-
-Route::get('/teachers/{id}', function($id) {
-    $teacher = Classroom::getTeacherById($id);
-    if (!$teacher) {
-        return response()->json(['message' => 'Teacher not found'], 404);
-    }
-    return response()->json($teacher);
-});
-
-Route::post('/teachers', function(Request $request) {
-    $data = $request->all();
-    $teacher = Classroom::createTeacher($data);
-    return response()->json(['message' => 'Teacher created', 'data' => $teacher], 201);
-});
-
-Route::patch('/teachers/{id}', function(Request $request, $id) {
-    $data = $request->all();
-    $teacher = Classroom::updateTeacher($id, $data);
-    if (!$teacher) {
-        return response()->json(['message' => 'Teacher not found'], 404);
-    }
-    return response()->json(['message' => 'Teacher updated', 'data' => $teacher]);
-});
-
-Route::delete('/teachers/{id}', function($id) {
-    $success = Classroom::deleteTeacher($id);
-    if (!$success) {
-        return response()->json(['message' => 'Teacher not found'], 404);
-    }
-    return response()->json(['message' => 'Teacher deleted']);
-});
+Route::get('/teachers', [ClassroomController::class, 'indexTeachers']);
+Route::get('/teachers/{id}', [ClassroomController::class, 'showTeacher']);
+Route::post('/teachers', [ClassroomController::class, 'storeTeacher']);
+Route::patch('/teachers/{id}', [ClassroomController::class, 'updateTeacher']);
+Route::delete('/teachers/{id}', [ClassroomController::class, 'destroyTeacher']);
